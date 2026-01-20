@@ -4,10 +4,12 @@ import toast from 'react-hot-toast';
 
 const WorkerDashboard = ({ user, setUser }) => {
   const [requests, setRequests] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [routes, setRoutes] = useState([]);
 
   useEffect(() => {
     fetchRequests();
+    fetchTasks();
   }, []);
 
   const fetchRequests = async () => {
@@ -25,6 +27,15 @@ const WorkerDashboard = ({ user, setUser }) => {
     }
   };
 
+  const fetchTasks = async () => {
+    try {
+      const response = await api.getTasks();
+      setTasks(response.data);
+    } catch (error) {
+      toast.error('Failed to fetch tasks');
+    }
+  };
+
   const updateStatus = async (id, status) => {
     try {
       await api.updateRequestStatus(id, status);
@@ -32,6 +43,16 @@ const WorkerDashboard = ({ user, setUser }) => {
       fetchRequests();
     } catch (error) {
       toast.error('Failed to update status');
+    }
+  };
+
+  const markTaskCollected = async (id) => {
+    try {
+      await api.markTaskCollected(id);
+      toast.success('Task marked as collected');
+      fetchTasks();
+    } catch (error) {
+      toast.error('Failed to update task');
     }
   };
 
@@ -48,7 +69,54 @@ const WorkerDashboard = ({ user, setUser }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold text-primary mb-6">Worker Dashboard</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* AI Assigned Tasks */}
+        <div className="bg-darker rounded-lg overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-700">
+            <h2 className="text-xl font-bold">AI Assigned Tasks</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-800">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Photo</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Location</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Time</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-700">
+                {tasks.map((task) => (
+                  <tr key={task.id}>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <img src={`http://localhost:5000${task.garbageReport?.imagePath}`} alt="Garbage" className="w-12 h-12 object-cover rounded" />
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm">
+                      {task.latitude.toFixed(4)},<br />{task.longitude.toFixed(4)}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm">
+                      {new Date(task.scheduledTime).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      {task.status === 'ASSIGNED' && (
+                        <button
+                          onClick={() => markTaskCollected(task.id)}
+                          className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-md text-xs transition duration-200"
+                        >
+                          Collected
+                        </button>
+                      )}
+                      {task.status === 'COLLECTED' && (
+                        <span className="text-green-500 font-medium text-sm">Done</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Assigned Requests */}
         <div className="bg-darker rounded-lg overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-700">
