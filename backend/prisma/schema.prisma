@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  role     String // Admin, Worker, Citizen
+
+  // Relations
+  pickupRequestsAsCitizen PickupRequest[] @relation("CitizenRequests")
+  pickupRequestsAsWorker  PickupRequest[] @relation("WorkerRequests")
+}
+
+model PickupRequest {
+  id          Int      @id @default(autoincrement())
+  address     String
+  garbageType String   // Dry, Wet, E-waste
+  pickupDate  DateTime
+  status      String   @default("Pending") // Pending, Assigned, Collected
+  citizenId   Int
+  workerId    Int?
+
+  // Relations
+  citizen User @relation("CitizenRequests", fields: [citizenId], references: [id])
+  worker  User? @relation("WorkerRequests", fields: [workerId], references: [id])
+}
