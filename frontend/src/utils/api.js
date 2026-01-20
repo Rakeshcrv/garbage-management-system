@@ -23,9 +23,10 @@ export const api = {
   createGarbageReport: (formData) => axios.post(`${API_BASE_URL}/garbage-reports`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
+  getGarbageReports: () => axios.get(`${API_BASE_URL}/garbage-reports`),
+  updateGarbageReportStatus: (id, action) => axios.put(`${API_BASE_URL}/garbage-reports/${id}`, { action }),
 
   // Tasks
   getTasks: () => axios.get(`${API_BASE_URL}/tasks`),
   markTaskCollected: (id) => axios.put(`${API_BASE_URL}/tasks/${id}/collect`),
-};
 };

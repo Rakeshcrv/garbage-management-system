@@ -115,6 +115,8 @@ const CitizenDashboard = ({ user, setUser }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const getStatusColor = (status) => {
     switch (status) {
       case 'Pending': return 'text-yellow-500';
       case 'Assigned': return 'text-blue-500';
