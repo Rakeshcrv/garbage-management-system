@@ -86,6 +86,32 @@ router.get('/', authenticateToken, authorizeRoles('Admin'), async (req, res) => 
   }
 });
 
+// Citizen: Get my reports
+router.get('/my-reports', authenticateToken, authorizeRoles('Citizen'), async (req, res) => {
+  try {
+    const reports = await prisma.garbageReport.findMany({
+      where: { citizenId: req.user.id },
+      include: {
+        tasks: {
+          include: {
+            worker: {
+              include: {
+                user: { select: { name: true } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.json(reports);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch reports' });
+  }
+});
+
 // Admin: Approve or reject report
 router.put('/:id', authenticateToken, authorizeRoles('Admin'), async (req, res) => {
   try {

@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../utils/auth';
 import toast from 'react-hot-toast';
 
-const Login = ({ setUser }) => {
+const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
@@ -12,8 +14,22 @@ const Login = ({ setUser }) => {
 
     try {
       const response = await login(formData.email, formData.password);
-      setUser(response.user);
       toast.success('Login successful!');
+
+      // Redirect based on role
+      switch (response.user.role) {
+        case 'Admin':
+          navigate('/admin');
+          break;
+        case 'Citizen':
+          navigate('/citizen');
+          break;
+        case 'Worker':
+          navigate('/worker');
+          break;
+        default:
+          navigate('/login');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
     } finally {

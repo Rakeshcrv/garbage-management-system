@@ -11,11 +11,12 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  role     String // Admin, Worker, Citizen
+  id          Int    @id @default(autoincrement())
+  name        String
+  email       String @unique
+  password    String
+  role        String // Admin, Worker, Citizen
+  profileImage String? // Profile picture file path
 
   // Relations
   pickupRequestsAsCitizen PickupRequest[] @relation("CitizenRequests")

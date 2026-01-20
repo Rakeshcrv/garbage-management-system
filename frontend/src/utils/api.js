@@ -11,6 +11,10 @@ export const api = {
   createUser: (userData) => axios.post(`${API_BASE_URL}/users`, userData),
   updateUser: (id, userData) => axios.put(`${API_BASE_URL}/users/${id}`, userData),
   deleteUser: (id) => axios.delete(`${API_BASE_URL}/users/${id}`),
+  getUserProfile: () => axios.get(`${API_BASE_URL}/users/profile`),
+  uploadProfileImage: (formData) => axios.post(`${API_BASE_URL}/users/profile-image`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
 
   // Pickup Requests
   getPickupRequests: () => axios.get(`${API_BASE_URL}/pickup-requests`),
@@ -24,6 +28,7 @@ export const api = {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
   getGarbageReports: () => axios.get(`${API_BASE_URL}/garbage-reports`),
+  getMyGarbageReports: () => axios.get(`${API_BASE_URL}/garbage-reports/my-reports`),
   updateGarbageReportStatus: (id, action) => axios.put(`${API_BASE_URL}/garbage-reports/${id}`, { action }),
 
   // Tasks
