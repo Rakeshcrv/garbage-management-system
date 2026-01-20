@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 const AdminDashboard = ({ user, setUser }) => {
   const [stats, setStats] = useState({ total: 0, pending: 0, collected: 0 });
   const [requests, setRequests] = useState([]);
+  const [reports, setReports] = useState([]);
   const [users, setUsers] = useState([]);
   const [workers, setWorkers] = useState([]);
   const [showUserForm, setShowUserForm] = useState(false);
@@ -22,15 +23,17 @@ const AdminDashboard = ({ user, setUser }) => {
 
   const fetchData = async () => {
     try {
-      const [statsRes, requestsRes, usersRes] = await Promise.all([
+      const [statsRes, requestsRes, usersRes, reportsRes] = await Promise.all([
         api.getStats(),
         api.getPickupRequests(),
         api.getUsers(),
+        api.getGarbageReports(),
       ]);
       setStats(statsRes.data);
       setRequests(requestsRes.data);
       setUsers(usersRes.data);
       setWorkers(usersRes.data.filter(u => u.role === 'Worker'));
+      setReports(reportsRes.data);
     } catch (error) {
       toast.error('Failed to fetch data');
     }
@@ -53,8 +56,14 @@ const AdminDashboard = ({ user, setUser }) => {
     }
   };
 
-  const handleUserChange = (e) => {
-    setUserFormData({ ...userFormData, [e.target.name]: e.target.value });
+  const handleReportAction = async (id, action) => {
+    try {
+      await api.updateGarbageReportStatus(id, action);
+      toast.success(`Report ${action}d successfully!`);
+      fetchData();
+    } catch (error) {
+      toast.error(`Failed to ${action} report`);
+    }
   };
 
   const deleteUser = async (id) => {
@@ -255,6 +264,62 @@ const AdminDashboard = ({ user, setUser }) => {
                       >
                         Delete
                       </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Garbage Reports */}
+        <div className="bg-darker rounded-lg overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-700">
+            <h2 className="text-xl font-bold">Garbage Reports</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-800">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Citizen</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Photo</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Location</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-700">
+                {reports.map((report) => (
+                  <tr key={report.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">{report.citizen?.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <img src={`http://localhost:5000${report.imagePath}`} alt="Garbage" className="w-16 h-16 object-cover rounded" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`font-medium ${report.status === 'REPORTED' ? 'text-yellow-500' : report.status === 'APPROVED' ? 'text-green-500' : 'text-red-500'}`}>
+                        {report.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {report.status === 'REPORTED' && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleReportAction(report.id, 'approve')}
+                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md text-sm transition duration-200"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleReportAction(report.id, 'reject')}
+                            className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-sm transition duration-200"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
