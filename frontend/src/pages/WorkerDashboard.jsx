@@ -89,7 +89,7 @@ const WorkerDashboard = ({ user, setUser }) => {
                 {tasks.map((task) => (
                   <tr key={task.id}>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <img src={`http://localhost:5000${task.garbageReport?.imagePath}`} alt="Garbage" className="w-12 h-12 object-cover rounded" />
+                      <img src={`http://localhost:5001${task.garbageReport?.imagePath}`} alt="Garbage" className="w-12 h-12 object-cover rounded" />
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm">
                       {task.latitude.toFixed(4)},<br />{task.longitude.toFixed(4)}

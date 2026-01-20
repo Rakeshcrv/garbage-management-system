@@ -293,7 +293,7 @@ const AdminDashboard = ({ user, setUser }) => {
                   <tr key={report.id}>
                     <td className="px-6 py-4 whitespace-nowrap">{report.citizen?.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <img src={`http://localhost:5000${report.imagePath}`} alt="Garbage" className="w-16 h-16 object-cover rounded" />
+                      <img src={`http://localhost:5001${report.imagePath}`} alt="Garbage" className="w-16 h-16 object-cover rounded" />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
