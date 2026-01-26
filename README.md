@@ -41,6 +41,14 @@ A full-stack web application for managing garbage pickup requests with role-base
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:5001
 
+5. **Access the application using docker"":
+   ```bash
+    docker build -t frontend
+    docker build -t backend
+    docker -d -p 5713:5713 frontend frontend:latest
+    docker -d -p 5000:5000 backend backend:latest  
+    ```
+
 ## Demo Accounts
 
 - **Admin**: admin@example.com / admin123
