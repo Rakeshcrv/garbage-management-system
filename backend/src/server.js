@@ -10,10 +10,7 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({
-  origin: ['http://65.2.124.242:5173', 'http://65.2.124.242:3000'],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 

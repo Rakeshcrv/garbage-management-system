@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://13.232.61.171:5000/api';
+
 
 export const api = {
   // Auth
