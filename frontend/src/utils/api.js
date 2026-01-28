@@ -8,6 +8,7 @@ export const api = {
 
   // Users
   getUsers: () => axios.get(`${API_BASE_URL}/users`),
+  getWorkers: () => axios.get(`${API_BASE_URL}/users/workers`),
   createUser: (userData) => axios.post(`${API_BASE_URL}/users`, userData),
   updateUser: (id, userData) => axios.put(`${API_BASE_URL}/users/${id}`, userData),
   deleteUser: (id) => axios.delete(`${API_BASE_URL}/users/${id}`),
@@ -29,9 +30,16 @@ export const api = {
   }),
   getGarbageReports: () => axios.get(`${API_BASE_URL}/garbage-reports`),
   getMyGarbageReports: () => axios.get(`${API_BASE_URL}/garbage-reports/my-reports`),
-  updateGarbageReportStatus: (id, action) => axios.put(`${API_BASE_URL}/garbage-reports/${id}`, { action }),
+  updateGarbageReportStatus: (id, action, workerId, adminNotes) => {
+    console.log('API call:', { id, action, workerId, adminNotes });
+    return axios.put(`${API_BASE_URL}/garbage-reports/${id}`, { action, workerId, adminNotes });
+  },
 
   // Tasks
   getTasks: () => axios.get(`${API_BASE_URL}/tasks`),
-  markTaskCollected: (id) => axios.put(`${API_BASE_URL}/tasks/${id}/collect`),
+  markTaskCollected: (id, action) => axios.put(`${API_BASE_URL}/tasks/${id}/collect`, { action }),
+
+  // Workload Management
+  getWorkerStats: () => axios.get(`${API_BASE_URL}/workload/stats`),
+  getBestAvailableWorker: () => axios.get(`${API_BASE_URL}/workload/best-available`),
 };

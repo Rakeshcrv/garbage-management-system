@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import toast from 'react-hot-toast';
+import { getStatusBadge, formatDate } from '../utils/statusHelpers.jsx';
 
 const WorkerDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -18,10 +19,11 @@ const WorkerDashboard = () => {
     }
   };
 
-  const markTaskCollected = async (id) => {
+  const markTaskCollected = async (id, action) => {
     try {
-      await api.markTaskCollected(id);
-      toast.success('Task marked as collected');
+      await api.markTaskCollected(id, action);
+      const actionText = action === 'start' ? 'started' : 'completed';
+      toast.success(`Task ${actionText} successfully`);
       fetchTasks();
     } catch (error) {
       toast.error('Failed to update task');
@@ -82,18 +84,26 @@ const WorkerDashboard = () => {
                     {new Date(task.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`font-medium ${getStatusColor(task.status)}`}>{task.status}</span>
+                    {getStatusBadge(task.status)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {task.status === 'ASSIGNED' && (
                       <button
-                        onClick={() => markTaskCollected(task.id)}
-                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md text-sm transition duration-200"
+                        onClick={() => markTaskCollected(task.id, 'start')}
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-md text-sm transition duration-200"
                       >
-                        Mark Collected
+                        Start Collection
                       </button>
                     )}
-                    {task.status === 'COLLECTED' && (
+                    {task.status === 'IN_PROGRESS' && (
+                      <button
+                        onClick={() => markTaskCollected(task.id, 'complete')}
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md text-sm transition duration-200"
+                      >
+                        Mark Completed
+                      </button>
+                    )}
+                    {task.status === 'COMPLETED' && (
                       <span className="text-green-500 font-medium text-sm">✓ Completed</span>
                     )}
                   </td>

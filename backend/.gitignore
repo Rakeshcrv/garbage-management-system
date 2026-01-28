@@ -1,7 +1,16 @@
-node_modules
+# dependencies
+node_modules/
+
+# uploads
+backend/uploads/
+
+# frontend build
+frontend/dist/
+
+# env & db
 .env
-.env.local
+.env.*
 backend/prisma/dev.db
-backend/uploads
-frontend/dist
+
+# OS
 .DS_Store

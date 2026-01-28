@@ -53,32 +53,12 @@ const Header = () => {
   return (
     <header className="bg-darker border-b border-gray-700 px-6 py-4">
       <div className="flex justify-between items-center">
+        <div className="flex-1"></div>
         
-        {/* App Name */}
-        <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-bold text-primary">GMS</h1>
-          <span className="text-sm text-gray-400 hidden sm:block">
-            Garbage Management System
-          </span>
-        </div>
-
         {/* User Profile Section */}
         <div className="flex items-center space-x-4">
           {user && (
             <>
-              {/* ✅ YOUR REQUESTED STATIC BLOCK */}
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-300">
-                  Welcome, Admin User
-                </span>
-
-                <img
-                  src="/src/assets/images/default-avatar.svg"
-                  alt="Profile"
-                  className="w-9 h-9 rounded-full object-cover border border-gray-600"
-                />
-              </div>
-
               {/* Existing Profile Dropdown (UNCHANGED) */}
               <div className="relative">
                 <button
@@ -88,7 +68,7 @@ const Header = () => {
                   <img
                     src={
                       user.profileImage
-                        ? `http://localhost:5001${user.profileImage}`
+                        ? `${user.profileImage}`
                         : '/default-avatar.svg'
                     }
                     alt="Profile"

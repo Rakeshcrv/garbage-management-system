@@ -23,6 +23,7 @@ model User {
   pickupRequestsAsWorker  PickupRequest[] @relation("WorkerRequests")
   garbageReports          GarbageReport[]
   worker                  Worker?
+  assignedReports         GarbageReport[] @relation("WorkerAssignments")
 }
 
 model PickupRequest {
@@ -44,13 +45,23 @@ model GarbageReport {
   imagePath String
   latitude  Float
   longitude Float
-  status    String   @default("REPORTED") // REPORTED, APPROVED, REJECTED
+  status    String   @default("REPORTED") // REPORTED, APPROVED, ASSIGNED, IN_PROGRESS, COMPLETED, REJECTED
   citizenId Int
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // New fields for enhanced workflow
+  preferredDate DateTime? // Preferred pickup date
+  address      String?   // Pickup address
+  notes        String?   // Citizen notes
+  adminNotes   String?   // Admin notes
+  statusHistory String?  // JSON string of status transitions
+  assignedWorkerId Int?  // Direct worker assignment
 
   // Relations
   citizen User     @relation(fields: [citizenId], references: [id])
   tasks   Task[]
+  assignedWorker User? @relation("WorkerAssignments", fields: [assignedWorkerId], references: [id])
 }
 
 model Task {
@@ -59,9 +70,14 @@ model Task {
   latitude         Float
   longitude        Float
   scheduledTime    DateTime
-  status           String    @default("ASSIGNED") // ASSIGNED, COLLECTED
+  status           String    @default("ASSIGNED") // ASSIGNED, IN_PROGRESS, COMPLETED
   workerId         Int
   createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  // New fields for enhanced workflow
+  statusHistory String?  // JSON string of status transitions
+  completedAt    DateTime? // When task was marked completed
 
   // Relations
   garbageReport GarbageReport? @relation(fields: [garbageReportId], references: [id])

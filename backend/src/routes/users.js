@@ -36,6 +36,19 @@ const profileImageUpload = multer({
   },
 });
 
+// Get all workers (Admin only)
+router.get('/workers', authenticateToken, authorizeRoles('Admin'), async (req, res) => {
+  try {
+    const workers = await prisma.user.findMany({
+      where: { role: 'Worker' },
+      select: { id: true, name: true, email: true },
+    });
+    res.json(workers);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Get all users (Admin only)
 router.get('/', authenticateToken, authorizeRoles('Admin'), async (req, res) => {
   try {
@@ -143,6 +156,52 @@ router.get('/profile', authenticateToken, async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete user (Admin only)
+router.delete('/:id', authenticateToken, authorizeRoles('Admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if user has assigned tasks or reports
+    const workerProfile = await prisma.worker.findUnique({
+      where: { userId: parseInt(id) },
+      include: {
+        tasks: {
+          where: {
+            status: {
+              in: ['ASSIGNED', 'IN_PROGRESS']
+            }
+          }
+        }
+      }
+    });
+
+    if (workerProfile && workerProfile.tasks.length > 0) {
+      return res.status(400).json({ 
+        error: 'Cannot delete worker with active assignments' 
+      });
+    }
+
+    // Delete the user (this will cascade delete related records)
+    await prisma.user.delete({
+      where: { id: parseInt(id) }
+    });
+
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ error: 'Failed to delete user' });
   }
 });
 

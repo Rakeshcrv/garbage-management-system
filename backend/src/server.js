@@ -23,6 +23,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/pickup-requests', require('./routes/pickupRequests'));
 app.use('/api/garbage-reports', require('./routes/garbageReports'));
 app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/workload', require('./routes/workload'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

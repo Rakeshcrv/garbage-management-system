@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import './index.css'
+import './utils/auth.js' // Import to set up axios interceptor
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
