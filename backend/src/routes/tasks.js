@@ -50,9 +50,15 @@ router.put('/:id/collect', authenticateToken, authorizeRoles('Worker'), async (r
     }
 
     const task = await prisma.task.findUnique({
-      where: { id: parseInt(id) },
-      include: { worker: true },
-    });
+  where: { id: parseInt(id) },
+  include: {
+    worker: {
+      include: {
+        user: true
+      }
+    }
+  }
+});
 
     if (!task || task.workerId !== worker.id) {
       return res.status(404).json({ error: 'Task not found or not assigned to you' });
