@@ -25,7 +25,7 @@ npm run dev
 
 **Demo Accounts:**
 - **Admin**: `admin@example.com` / `admin123`
-- **Worker**: `worker1@example.com` / `password`
+- **Workers**: `worker1@example.com` / `password` (workers 1-5 available)
 - **Citizen**: `citizen@example.com` / `password`
 
 ---

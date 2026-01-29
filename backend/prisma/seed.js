@@ -129,7 +129,7 @@ async function main() {
   console.log('');
   console.log('🚀 Ready for demo! Login with:');
   console.log('   Admin: admin@example.com / admin123');
-  console.log('   Worker: worker1@example.com / password');
+  console.log('   Workers: worker1@example.com / password (workers 1-5)');
   console.log('   Citizen: citizen@example.com / password');
 }
 
